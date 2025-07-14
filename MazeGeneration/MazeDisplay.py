@@ -68,7 +68,7 @@ class MazeGraphDisplay:
             for neighbor in self.graph.get((r, c), []):
                 stack.append(neighbor)
 
-    def render_maze_with_bfs_traversal(self):
+    def render_maze_with_bfs_traversal(self, visualize=True):
         """New BFS traversal (queue-based)."""
         visited = set()
         queue = deque([(1, 1)])  # Start position
@@ -79,11 +79,13 @@ class MazeGraphDisplay:
                 continue
 
             visited.add((r, c))
-            self.draw_cell(r, c, "blue")  # Different color for BFS
-            self.window.update()
-            time.sleep(0.001)
+            if visualize:
+                self.draw_cell(r, c, "blue")  # Different color for BFS
+                self.window.update()
+                time.sleep(0.001)
 
             for neighbor in self.graph.get((r, c), []):
                 queue.append(neighbor)
 
-        self.window.mainloop()
+        if visualize:
+             self.window.mainloop()
