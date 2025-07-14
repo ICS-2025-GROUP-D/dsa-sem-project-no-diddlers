@@ -27,4 +27,4 @@ class MazeGenerator:
             if self.in_bounds(nr, nc) and not self.visited[nr][nc]:
                 result.append((nr, nc))
         return result
-
+ 
