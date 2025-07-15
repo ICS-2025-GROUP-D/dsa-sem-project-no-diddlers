@@ -27,4 +27,28 @@ class MazeGenerator:
             if self.in_bounds(nr, nc) and not self.visited[nr][nc]:
                 result.append((nr, nc))
         return result 
+    
+    def generate_maze(self):
+   
+        start_r, start_c = 1, 1
+        self.maze[start_r][start_c] = 1
+        self.visited[start_r][start_c] = True
+        self.stack.append((start_r, start_c))
+
+        while self.stack:
+            r, c = self.stack[-1]
+            neighbors = self.neighbors(r, c)
+
+        if neighbors:
+            nr, nc = random.choice(neighbors)
+            wall_r, wall_c = (r + nr) // 2, (c + nc) // 2
+            self.maze[wall_r][wall_c] = 1
+            self.maze[nr][nc] = 1
+            self.visited[nr][nc] = True
+            self.stack.append((nr, nc))
+        else:
+            self.stack.pop()
+
+        return self.maze
+
  
