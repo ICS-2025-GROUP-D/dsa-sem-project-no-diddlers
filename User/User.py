@@ -64,16 +64,27 @@ class UserManager:
 
         self.save_users(users)
 
+    def delete_user(self, username_to_delete):
+        users = self.load_users()
+        updated_users = [user for user in users if user["username"] != username_to_delete]
+        self.save_users(updated_users)
+    
+    def confirm_delete(self, username_to_delete):
+        confirm = messagebox.askyesno("Confirm Deletion", f"Are you sure you want to delete user '{username_to_delete}'?")
+        if confirm:
+            self.delete_user(username_to_delete)
+            messagebox.showinfo("Deleted", f"User '{username_to_delete}' has been deleted.")
+            self.show_leaderboard()  # Refresh leaderboard window
+
     def show_leaderboard(self):
         users = self.load_users()
-
         linked_list = LeaderboardLinkedList()
         for user in users:
             linked_list.insert_sorted(user["username"], user["score"])
 
         leaderboard_window = tk.Toplevel()
         leaderboard_window.title("Leaderboard")
-        leaderboard_window.geometry("300x400")
+        leaderboard_window.geometry("350x500")
         leaderboard_window.resizable(False, False)
 
         tk.Label(leaderboard_window, text="🏆 Leaderboard", font=("Arial", 16, "bold")).pack(pady=10)
@@ -83,10 +94,24 @@ class UserManager:
 
         leaderboard = linked_list.to_list()
         for idx, (username, score) in enumerate(leaderboard, start=1):
-            tk.Label(frame, text=f"{idx}. {username} - {score} pts", font=("Arial", 12)).pack(anchor="w", padx=10)
+            row = tk.Frame(frame)
+            row.pack(fill="x", pady=2, padx=10)
 
-        tk.Button(leaderboard_window, text="Close", command=leaderboard_window.destroy).pack(pady=10)
+            label = tk.Label(row, text=f"{idx}. {username} - {score} pts", font=("Arial", 12), anchor="w")
+            label.pack(side="left", fill="x", expand=True)
 
+            delete_button = tk.Button(
+                row,
+                text="Delete",
+                font=("Arial", 10),
+                fg="white",
+                bg="red",
+                command=lambda u=username: self.confirm_delete(u)
+            )
+            delete_button.pack(side="right")
+
+        tk.Button(leaderboard_window, text="Close", command=leaderboard_window.destroy, font=("Arial", 10)).pack(pady=10)
+    
     def launch_login_ui(self):
         def on_submit():
             username = username_entry.get().strip()
